@@ -1,5 +1,4 @@
 # Arcade Game
--------
 
 A game that you should control the `characher` to reach the water.
 
@@ -10,7 +9,7 @@ A game that you should control the `characher` to reach the water.
 
 ## How to play
 
-Press `up`, `down`, `left`, `right` key in keyboard to control the characher to move
+Press `up`, `down`, `left`, `right` key in **keyboard** to control the characher to move
 
 ## Goal
 
