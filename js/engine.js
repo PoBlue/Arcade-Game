@@ -88,10 +88,6 @@ var Engine = (function(global) {
             checkCollisions(enemy);
             enemy.checkOffScreen();
         });
-
-        if (player.y <= 45) {
-            console.log("win"); 
-        }
     }
 
 
@@ -111,7 +107,7 @@ var Engine = (function(global) {
      * the data/properties related to the object. Do your drawing in your
      * render methods.
      */
-    allEnemies = [new Enemy(50, 180, 20)];
+    allEnemies = [new Enemy(50, 220, 50), new Enemy(0, 140, 130), new Enemy(0, 50, 170)];
     player = new Player();
 
     function updateEntities(dt) {
