@@ -97,6 +97,7 @@ var Engine = (function(global) {
 
             if (isCollisionY && isCollisionsX) {
                 player.resetLocation();
+                showMessage("You are failure, Never give up, Please try one more time");
             }
     };
 

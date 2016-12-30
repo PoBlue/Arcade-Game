@@ -107,14 +107,13 @@ var isInsideCanvas = function (x,y) {
 };
 
 var winAction = function () {
-    console.log("hello,world");
+    showMessage("Congratulation! You are Success!! Keep Moving");
 };
 
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-
-
+var showMessage = function(message) {
+    var messageDiv = document.getElementById("message");
+    messageDiv.innerHTML = message;
+};
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
