@@ -1,11 +1,17 @@
 // Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+var Enemy = function(x, y, speed) {
+    this.x = x;
+    this.y = y;
+    this.width = 90;
+    this.height = 50;
+    this.speed = speed;
     this.sprite = 'images/enemy-bug.png';
+};
+
+Enemy.prototype.checkOffScreen = function() {
+    if (!isInsideCanvas(this.x, this.y)) {
+        this.x = 0;
+    };
 };
 
 // Update the enemy's position, required method for game
@@ -14,6 +20,7 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
+    this.x = this.x + (dt * this.speed);
 };
 
 // Draw the enemy on the screen, required method for game
@@ -24,7 +31,68 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+var OriginLocation = {
+    x: 190,
+    y: 400
+};
 
+var Player = function() {
+    this.x = OriginLocation.x;
+    this.y = OriginLocation.y;
+    this.width = 60;
+    this.height = 60;
+    this.stepLenght = 45;
+    this.sprite = 'images/char-princess-girl.png';
+}
+
+Player.prototype.resetLocation = function() {
+    this.x = OriginLocation.x;
+    this.y = OriginLocation.y;
+};
+
+Player.prototype.update = function() {
+};
+
+Player.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+Player.prototype.handleInput = function(pressedKey) {
+    switch (pressedKey){
+        case 'left':
+            var nextX = this.x - this.stepLenght;
+            if (isInsideCanvas(nextX, this.y)) {
+                this.x = nextX;
+            };
+            break;
+        case 'right':
+            nextX = this.x + this.stepLenght;
+            if (isInsideCanvas(nextX + this.width, this.y)) {
+                this.x = nextX;
+            };
+            break;
+        case 'up':
+            nextY = this.y - this.stepLenght;
+            if (isInsideCanvas(this.x, nextY)) {
+                this.y = nextY;
+            };
+            break;
+        case 'down':
+            nextY = this.y + this.stepLenght;
+            if (isInsideCanvas(this.x, nextY + this.height + CANVAS_OFFSET_HEIGHT)) {
+                this.y = nextY;
+            };
+            break;
+        default:
+            console.log("error in handle key");
+    }
+};
+
+var isInsideCanvas = function (x,y) {
+    var isInsideX = (0 <= x && x <= CANVAS_WIDTH);
+    var isInsideY = (0 <= y && y <= CANVAS_HEIGHT);
+    return (isInsideX && isInsideY);
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies

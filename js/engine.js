@@ -14,6 +14,10 @@
  * a little simpler to work with.
  */
 
+var CANVAS_OFFSET_HEIGHT = 120;
+var CANVAS_HEIGHT = 606;
+var CANVAS_WIDTH = 505;
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -25,8 +29,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    canvas.width = 505;
-    canvas.height = 606;
+    canvas.width = CANVAS_WIDTH;
+    canvas.height = CANVAS_HEIGHT;
     doc.body.appendChild(canvas);
 
     /* This function serves as the kickoff point for the game loop itself
@@ -80,8 +84,25 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        allEnemies.forEach(function(enemy) {
+            checkCollisions(enemy);
+            enemy.checkOffScreen();
+        });
+
+        if (player.y <= 45) {
+            console.log("win"); 
+        }
     }
+
+
+    function checkCollisions(enemy) {
+            var isCollisionsX = (enemy.x <= player.x + player.width && player.x <= enemy.x + enemy.width);
+            var isCollisionY = (enemy.y <= player.y + player.height && player.y <= enemy.y + enemy.height);        
+
+            if (isCollisionY && isCollisionsX) {
+                player.resetLocation();
+            }
+    };
 
     /* This is called by the update function and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -90,6 +111,9 @@ var Engine = (function(global) {
      * the data/properties related to the object. Do your drawing in your
      * render methods.
      */
+    allEnemies = [new Enemy(50, 180, 20)];
+    player = new Player();
+
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
@@ -171,7 +195,8 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-princess-girl.png'
     ]);
     Resources.onReady(init);
 
