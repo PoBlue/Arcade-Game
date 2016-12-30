@@ -1,12 +1,34 @@
-// Enemies our player must avoid
-var Enemy = function(x, y, speed) {
+var STEP_LENGHT_X = 101;
+var STEP_LENGHT_Y = 83;
+var PLAYER_WIDTH = 98;
+var PLAYER_HEIGHT = 90;
+var ENEMY_WIDTH = 90;
+var ENEMY_HEIGHT = 50;
+var START_LOCATION_PLAYER_X = 200;
+var START_LOCATION_PLAYER_Y = 380;
+
+var Character = function(x, y, width, height, sprite) {
     this.x = x;
     this.y = y;
-    this.width = 90;
-    this.height = 50;
-    this.speed = speed;
-    this.sprite = 'images/enemy-bug.png';
+    this.width = width;
+    this.height = height;
+    this.sprite = sprite;
 };
+
+Character.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+// Enemies our player must avoid
+var Enemy = function(x, y, speed) {
+    Character.call(this, x, y, 
+        ENEMY_WIDTH, ENEMY_HEIGHT, 
+        'images/enemy-bug.png');
+    this.speed = speed;
+};
+
+Enemy.prototype = Object.create(Character.prototype);
+Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.checkOffScreen = function() {
     if (this.x + this.width < 0 || CANVAS_WIDTH < this.x) {
@@ -17,52 +39,40 @@ Enemy.prototype.checkOffScreen = function() {
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
     this.x = this.x + (dt * this.speed);
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-var OriginLocation = {
-    x: 200,
-    y: 380
-};
+
 
 var Player = function() {
-    this.x = OriginLocation.x;
-    this.y = OriginLocation.y;
-    this.width = 98;
-    this.height = 90;
-    this.stepLenghtX = 100;
-    this.stepLenghtY = 80;
-    this.sprite = 'images/char-princess-girl.png';
+    Character.call(this, 
+        START_LOCATION_PLAYER_X, START_LOCATION_PLAYER_Y, 
+        PLAYER_WIDTH, PLAYER_HEIGHT, 
+        'images/char-princess-girl.png');
+    this.stepLenghtX = STEP_LENGHT_X;
+    this.stepLenghtY = STEP_LENGHT_Y;
 }
 
+Player.prototype = Object.create(Character.prototype);
+Player.prototype.constructor = Player;
+
 Player.prototype.resetLocation = function() {
-    this.x = OriginLocation.x;
-    this.y = OriginLocation.y;
+    this.x = START_LOCATION_PLAYER_X;
+    this.y = START_LOCATION_PLAYER_Y;
 };
 
 Player.prototype.update = function() {
-};
-
-Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
 Player.prototype.handleInput = function(pressedKey) {
     switch (pressedKey){
         case 'left':
             var nextX = this.x - this.stepLenghtX;
-            if (isInsideCanvas(nextX, this.y)) {
+            if (this.isInsideCanvas(nextX, this.y)) {
                 this.x = nextX;
             } else {
                 this.x = 0;
@@ -70,7 +80,7 @@ Player.prototype.handleInput = function(pressedKey) {
             break;
         case 'right':
             nextX = this.x + this.stepLenghtX;
-            if (isInsideCanvas(nextX + this.width, this.y)) {
+            if (this.isInsideCanvas(nextX + this.width, this.y)) {
                 this.x = nextX;
             } else {
                 this.x = CANVAS_WIDTH - this.width;
@@ -78,7 +88,7 @@ Player.prototype.handleInput = function(pressedKey) {
             break;
         case 'up':
             nextY = this.y - this.stepLenghtY;
-            if (isInsideCanvas(this.x, nextY)) {
+            if (this.isInsideCanvas(this.x, nextY)) {
                 this.y = nextY;
             } else {
                 if (nextY <= 45) {
@@ -89,7 +99,7 @@ Player.prototype.handleInput = function(pressedKey) {
             break;
         case 'down':
             nextY = this.y + this.stepLenghtY;
-            if (isInsideCanvas(this.x, nextY + this.height + CANVAS_OFFSET_HEIGHT)) {
+            if (this.isInsideCanvas(this.x, nextY + this.height + CANVAS_OFFSET_HEIGHT)) {
                 this.y = nextY;
             } else {
                 this.y = CANVAS_HEIGHT - CANVAS_OFFSET_HEIGHT - this.height
@@ -100,7 +110,7 @@ Player.prototype.handleInput = function(pressedKey) {
     }
 };
 
-var isInsideCanvas = function (x,y) {
+Player.prototype.isInsideCanvas = function (x,y) {
     var isInsideX = (0 <= x && x <= CANVAS_WIDTH);
     var isInsideY = (0 <= y && y <= CANVAS_HEIGHT);
     return (isInsideX && isInsideY);
